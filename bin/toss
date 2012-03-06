@@ -1,3 +1,52 @@
 #!/usr/bin/env ruby
+lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
 
-puts "toss"
+require 'rubygems'
+require 'toss'
+
+puts "#{Toss::NAME} #{Toss::VERSION}"
+
+$options = Toss::Options.load
+
+# set environment
+set :env, $options[:environment]
+
+# load preset
+$options[:pre_set].each do |name, value|
+  set name, value
+end
+
+# load recipe
+if $options[:recipes].count > 0
+  $options[:recipes].each do |file|
+    require file  
+  end
+else
+  require "#{Dir.pwd}/Tossfile.rb"
+end
+
+# load set
+$options[:set].each do |name, value|
+  set name, value
+end
+
+if ARGV.count.to_i > 0 
+  @steps = []
+  ARGV.each do |func|
+    step func
+  end
+end
+
+# run steps
+steps && steps.each_with_index do |toss_step, index|
+  @step_index = index
+  puts "== " + cyan(cap_words(toss_step[0].to_s.gsub("_", " "))) + " =="
+  if method(toss_step[0]).call == false
+    rollback_steps
+    exit(1)
+  end
+end
+
+# close any open ssh sessions
+close_sessions

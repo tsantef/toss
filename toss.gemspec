@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Tim Santeford"]
   s.email       = ["tsantef@gmail.com"]
-  s.homepage    = "https://github.com/tsantef/toss"
+  s.homepage    = %q{https://github.com/tsantef/toss}
   s.default_executable = %q{toss}
   s.summary     = %q{toss - Simple deployment}
   s.description = %q{toss - Simple deployment}
@@ -20,7 +20,8 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
+  s.add_dependency(%q<net-ssh>, [">= 2.0.14"])
+  s.add_dependency(%q<net-scp>, [">= 1.0.0"])
+  s.add_dependency(%q<highline>, [">= 0"])
+  
 end
